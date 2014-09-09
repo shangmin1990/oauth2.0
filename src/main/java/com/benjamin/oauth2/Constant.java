@@ -12,4 +12,5 @@ public interface Constant {
   String FAILURE_URL = "authentication-failure-url";
   //认证成功的请求地址
   String SUCCESS_URL = " default-target-url";
+  String TOKEN = "token";
 }

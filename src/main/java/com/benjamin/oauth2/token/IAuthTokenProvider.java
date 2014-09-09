@@ -9,7 +9,7 @@ public interface IAuthTokenProvider {
   //check Token
   boolean checkToken(Token token);
   //
-  void saveToken(Token token);
+  void saveToken(String key,Token token);
   //
   Token getToken(String key);
   //

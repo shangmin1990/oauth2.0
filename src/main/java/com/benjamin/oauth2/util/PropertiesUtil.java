@@ -77,6 +77,7 @@ public class PropertiesUtil {
      properties.load(in);
     }catch (Exception e){
       e.printStackTrace();
+      initDefault();
     }finally {
       if (in != null){
         try {

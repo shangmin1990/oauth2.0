@@ -14,10 +14,10 @@ import java.util.UUID;
  */
 public class SimpAuthTokenGenerator implements IAuthTokenGenerator, Constant {
 
-  //Token有效期(单位分钟)
-  private int finalTokenValid = 30*24*60;
-  //AccessToken有效期 30分钟
-  private int accessTokenValid = 30;
+  //Token有效期(单位毫秒)
+  private long finalTokenValid = 30*24*60*60*1000;
+  //AccessToken有效期 30分钟(单位毫秒)
+  private long accessTokenValid = 30*60*1000;
 
   public SimpAuthTokenGenerator(){
     try{

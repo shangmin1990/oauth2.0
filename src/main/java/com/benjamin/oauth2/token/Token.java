@@ -1,9 +1,12 @@
 package com.benjamin.oauth2.token;
 
+import java.io.Serializable;
+import java.util.Comparator;
+
 /**
  * Created by benjamin on 9/3/14.
  */
-public class Token {
+public class Token implements Comparator<Token>,Serializable{
   //Token 值
   private String value;
   // Token生成时间
@@ -60,5 +63,30 @@ public class Token {
 
   public void setAccess(long access) {
     this.access = access;
+  }
+
+  @Override
+  public int compare(Token token1, Token token2) {
+    return (int) (token1.getGeneratorTime() - token2.getGeneratorTime());
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if(obj == null)
+      return false;
+    if(obj instanceof Token && this.getValue().equals(((Token) obj).getValue())){
+      return true;
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return this.getValue().hashCode();
+  }
+
+  @Override
+  public String toString(){
+    return this.getValue();
   }
 }

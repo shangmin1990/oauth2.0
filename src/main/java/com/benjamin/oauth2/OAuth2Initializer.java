@@ -1,5 +1,7 @@
 package com.benjamin.oauth2;
 
+import com.benjamin.oauth2.authorization.impl.ImplicitAuthorizationHandler;
+import com.benjamin.oauth2.authorization.impl.PasswordAuthorizationHandler;
 import com.benjamin.oauth2.util.PropertiesUtil;
 
 import javax.servlet.ServletContextEvent;
@@ -16,6 +18,9 @@ public class OAuth2Initializer implements ServletContextListener {
 //    PropertiesUtil.init(path);
     PropertiesUtil.init(location);
     System.out.println(location);
+    //实例化AuthorizationHandler
+    new ImplicitAuthorizationHandler();
+    new PasswordAuthorizationHandler();
   }
 
   @Override

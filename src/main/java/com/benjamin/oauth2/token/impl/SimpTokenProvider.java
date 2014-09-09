@@ -1,25 +1,24 @@
 package com.benjamin.oauth2.token.impl;
 
+import com.benjamin.oauth2.token.IAuthTokenGenerator;
 import com.benjamin.oauth2.token.IAuthTokenProvider;
 import com.benjamin.oauth2.token.Token;
-import sun.invoke.empty.Empty;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by benjamin on 9/4/14.
  */
-public class SimpTokenProvider extends SimpAuthTokenGenerator implements IAuthTokenProvider {
+public class SimpTokenProvider implements IAuthTokenProvider {
+
+  private IAuthTokenGenerator authTokenGenerator = new SimpAuthTokenGenerator();
 
   private static ConcurrentHashMap<String, Token> tokens = new ConcurrentHashMap<String, Token>();
 
   @Override
   public void initializer() {
-
+    TokenCheckTask.checkTokenExpires();
   }
 
   @Override
@@ -29,8 +28,10 @@ public class SimpTokenProvider extends SimpAuthTokenGenerator implements IAuthTo
   }
 
   @Override
-  public void saveToken(Token token) {
-    tokens.put(token.getValue(),token);
+  public void saveToken(String key,Token token) {
+    if(key == null)
+      key = token.getValue();
+    tokens.put(key,token);
   }
 
   @Override
@@ -54,16 +55,26 @@ public class SimpTokenProvider extends SimpAuthTokenGenerator implements IAuthTo
   @Override
   public void destroy() {
     TokenCheckTask.timerTask.cancel();
+    tokens.clear();
+    tokens = null;
   }
 
   static class TokenCheckTask {
-    static TimerTask timerTask = new TimerTask() {
+
+    private static TimerTask timerTask = new TimerTask() {
       @Override
       public void run() {
         Collection<Token> tokenCollection = tokens.values();
-        Iterator<Token> tokenIterator = tokenCollection.iterator();
-        while (tokenIterator.hasNext()){
-
+        if(tokens.size() > 0){
+          Iterator<Token> tokenIterator = tokenCollection.iterator();
+          while (tokenIterator.hasNext()){
+            Token token = tokenIterator.next();
+            //token 已经过期了
+            if(System.currentTimeMillis() - token.getGeneratorTime() > token.getAccess()){
+              tokenIterator.remove();
+              tokens.remove(token.getValue());
+            }
+          }
         }
       }
     };
