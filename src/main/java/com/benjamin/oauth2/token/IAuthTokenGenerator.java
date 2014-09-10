@@ -16,4 +16,11 @@ public interface IAuthTokenGenerator {
    */
   Token generateToken();
 
+  /**
+   * 生成RefreshToken
+   * @return
+   */
+
+  Token generateRefreshToken();
+
 }

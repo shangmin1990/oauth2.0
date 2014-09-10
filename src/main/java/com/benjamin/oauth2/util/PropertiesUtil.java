@@ -93,4 +93,8 @@ public class PropertiesUtil {
     return properties.getProperty(key);
   }
 
+  public static String getString(String key,String defaultValue){
+    return properties.getProperty(key, defaultValue);
+  }
+
 }

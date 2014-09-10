@@ -7,27 +7,36 @@ import java.util.Comparator;
  * Created by benjamin on 9/3/14.
  */
 public class Token implements Comparator<Token>,Serializable{
+  //此Token的唯一标识,与用户的标识信息相同,一般是 username 或者userId
+  //为什么要有此字段.
+//  private String identify;
+//
+//  public String getIdentify() {
+//    return identify;
+//  }
+//
+//  public void setIdentify(String identify) {
+//    this.identify = identify;
+//  }
+
   //Token 值
   private String value;
   // Token生成时间
   private long generatorTime;
-  //Token 刷新时间
-  private long refreshTime;
   //有效期
-  private long access;
-
-  public GrantType getTokenType() {
-    return tokenType;
-  }
-
-  public void setTokenType(GrantType tokenType) {
-    this.tokenType = tokenType;
-  }
-
-  //
-  private GrantType tokenType;
-
+  private long expires;
+  //是否是临时token
+  private boolean isAccessToken;
+  //此token的刷新token
   private Token refreshToken;
+
+  public boolean isAccessToken() {
+    return isAccessToken;
+  }
+
+  public void setAccessToken(boolean isAccessToken) {
+    this.isAccessToken = isAccessToken;
+  }
 
   public Token(){
 
@@ -49,20 +58,20 @@ public class Token implements Comparator<Token>,Serializable{
     this.generatorTime = generatorTime;
   }
 
-  public long getRefreshTime() {
-    return refreshTime;
+  public long getExpires() {
+    return expires;
   }
 
-  public void setRefreshTime(long refreshTime) {
-    this.refreshTime = refreshTime;
+  public void setExpires(long expires) {
+    this.expires = expires;
   }
 
-  public long getAccess() {
-    return access;
+  public Token getRefreshToken() {
+    return refreshToken;
   }
 
-  public void setAccess(long access) {
-    this.access = access;
+  public void setRefreshToken(Token refreshToken) {
+    this.refreshToken = refreshToken;
   }
 
   @Override

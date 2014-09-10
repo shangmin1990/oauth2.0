@@ -30,9 +30,13 @@ public abstract class AbstractAuthorizationHandler implements AuthorizationHandl
 
   protected IAuthTokenProvider tokenProvider = null;
 
+  protected static final String USERNAME = "username";
+
+  protected static final String PASSWORD = "password";
+
   public AbstractAuthorizationHandler(){
     super();
-    tokenProvider = new SimpTokenProvider();
+    tokenProvider = SimpTokenProvider.getInstance();
   }
 
   public AbstractAuthorizationHandler(IAuthTokenProvider authTokenProvider){

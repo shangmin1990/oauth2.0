@@ -14,16 +14,25 @@ import java.util.UUID;
  */
 public class SimpAuthTokenGenerator implements IAuthTokenGenerator, Constant {
 
-  //Token有效期(单位毫秒)
-  private long finalTokenValid = 30*24*60*60*1000;
-  //AccessToken有效期 30分钟(单位毫秒)
-  private long accessTokenValid = 30*60*1000;
+  //默认配置，可以在oauth.properties中配置此项
+  //Token有效期 (单位毫秒)
+  private long tokenExpires = 30;
+  //默认配置，可以在oauth.properties中配置此项
+  //AccessToken有效期 30分钟 (转换为毫秒,默认配置)
+  private long accessTokenExpires = 30;
+  //默认配置，可以在oauth.properties中配置此项
+  //永不过期
+  private long refreshTokenExpires = -1;
 
   public SimpAuthTokenGenerator(){
     try{
-      int access = Integer.parseInt(PropertiesUtil.getString(ACCESS));
+      long access = Long.parseLong(PropertiesUtil.getString(EXPIRES, String.valueOf(tokenExpires)))*24*60*60*1000;
+      long accessTokenValidTime = Long.parseLong(PropertiesUtil.getString(ACCESS_EXPIRES, String.valueOf(accessTokenExpires)))*60*1000;
+      long refreshTokenExpires = Long.parseLong(PropertiesUtil.getString(REFRESH_EXPIRES, String.valueOf(this.refreshTokenExpires)))*24*60*60*1000;
 //      int access = 30;
-      this.finalTokenValid = access;
+      this.tokenExpires = access;
+      this.accessTokenExpires = accessTokenValidTime;
+      this.refreshTokenExpires = refreshTokenExpires;
     }catch (Exception e){
 
     }
@@ -31,6 +40,27 @@ public class SimpAuthTokenGenerator implements IAuthTokenGenerator, Constant {
 
   @Override
   public Token generateToken() {
+    Token token = generateRefreshToken();
+    Token refreshToken = generateRefreshToken();
+    if(token != null){
+      token.setExpires(tokenExpires);
+      token.setRefreshToken(refreshToken);
+    }
+    return token;
+  }
+
+  @Override
+  public Token generateAccessToken(){
+    Token token =  generateRefreshToken();
+    if(token != null){
+      token.setExpires(accessTokenExpires);
+      token.setAccessToken(true);
+    }
+    return token;
+  }
+
+  @Override
+  public Token generateRefreshToken() {
     String uuid = UUID.randomUUID().toString();
     Token token;
     try{
@@ -38,18 +68,11 @@ public class SimpAuthTokenGenerator implements IAuthTokenGenerator, Constant {
       String value = Base64.encodeBase64String(uuid.getBytes("UTF-8"));
       token.setValue(value);
       token.setGeneratorTime(System.currentTimeMillis());
-      token.setAccess(this.finalTokenValid);
+      token.setExpires(this.refreshTokenExpires);
+      token.setAccessToken(false);
     }catch (UnsupportedEncodingException e){
       token = null;
     }
     return token;
   }
-
-  @Override
-  public Token generateAccessToken(){
-    Token token =  generateToken();
-    token.setAccess(accessTokenValid);
-    return token;
-  }
-
 }

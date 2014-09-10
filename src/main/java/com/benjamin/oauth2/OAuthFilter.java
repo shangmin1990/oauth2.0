@@ -18,7 +18,7 @@ import java.io.IOException;
 public class OAuthFilter implements Filter, Constant{
 
   private static final String TOKEN = "token";
-  private SimpTokenProvider simpTokenProvider = new SimpTokenProvider();
+  private SimpTokenProvider simpTokenProvider = SimpTokenProvider.getInstance();
 //  private List<RequestHandler> requestHandlers = new ArrayList<RequestHandler>();
   private AuthorizationHandler requestHandler;
 
@@ -33,6 +33,7 @@ public class OAuthFilter implements Filter, Constant{
     HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
     String path = httpServletRequest.getServletContext().getContextPath();
     System.out.println(path);
+    String username = httpServletRequest.getParameter("username");
     String tokenValue = httpServletRequest.getParameter(PropertiesUtil.getString(PARAMETER_NAME));
 //    String tokenValue = httpServletRequest.getParameter("token");
     Cookie[] cookies = httpServletRequest.getCookies();
@@ -47,8 +48,8 @@ public class OAuthFilter implements Filter, Constant{
       httpServletResponse.sendRedirect(path+"/login.html");
 //      WebUtil.replyNoAccess(httpServletRequest, httpServletResponse);
     } else {
-      Token token = simpTokenProvider.getToken(tokenValue);
-      if(simpTokenProvider.checkToken(token)){
+      Token token = simpTokenProvider.getToken(username);
+      if(simpTokenProvider.checkToken(httpServletRequest,token)){
 //        try{
 //          requestHandler.handleAuthorization(servletRequest, servletResponse);
 //        }catch (Exception e){

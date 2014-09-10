@@ -1,21 +1,60 @@
 package com.benjamin.oauth2.token;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * Created by benjamin on 9/3/14.
  */
 public interface IAuthTokenProvider {
-  //initial
+  /**
+   * AuthTokenProvider初始化 调用的方法
+   */
   void initializer();
-  //check Token
-  boolean checkToken(Token token);
-  //
-  void saveToken(String key,Token token);
-  //
+
+  /**
+   * 检查token的合法性
+   * @param request
+   * @param token
+   * @return
+   */
+  boolean checkToken(HttpServletRequest request, Token token);
+
+  /**
+   * 保存一个Token(可能是 AccessToken 与 refreshToken)
+   * @param key
+   * @param token
+   */
+  void saveToken(String key, Token token);
+
+  /**
+   * 获取token
+   * @param key
+   * @return
+   */
   Token getToken(String key);
-  //
-  Token refreshToken();
-  //
+
+  /**
+   * 获取accessToken
+   * @param key
+   * @return
+   */
+  Token getAccessToken(String key);
+
+  /**
+   * 通过 refreshToken获取 新的Token
+   * @param token
+   * @return
+   */
+  Token refreshToken(Token token);
+
+  /**
+   * 删除一个Token
+   * @param token
+   */
   void deleteToken(Token token);
-  //
+
+  /**
+   * 销毁方法
+   */
   void destroy();
 }

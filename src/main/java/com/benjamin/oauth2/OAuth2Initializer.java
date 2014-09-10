@@ -18,9 +18,6 @@ public class OAuth2Initializer implements ServletContextListener {
 //    PropertiesUtil.init(path);
     PropertiesUtil.init(location);
     System.out.println(location);
-    //实例化AuthorizationHandler
-    new ImplicitAuthorizationHandler();
-    new PasswordAuthorizationHandler();
   }
 
   @Override
