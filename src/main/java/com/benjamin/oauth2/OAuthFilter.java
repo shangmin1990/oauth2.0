@@ -1,6 +1,7 @@
 package com.benjamin.oauth2;
 
-import com.benjamin.oauth2.authorization.AuthorizationHandler;
+import com.benjamin.oauth2.handler.IRequestHandler;
+import com.benjamin.oauth2.handler.impl.TokenRequestHandler;
 import com.benjamin.oauth2.token.Token;
 import com.benjamin.oauth2.token.impl.SimpTokenProvider;
 import com.benjamin.oauth2.util.PropertiesUtil;
@@ -19,12 +20,12 @@ public class OAuthFilter implements Filter, Constant{
 
   private static final String TOKEN = "token";
   private SimpTokenProvider simpTokenProvider = SimpTokenProvider.getInstance();
-//  private List<RequestHandler> requestHandlers = new ArrayList<RequestHandler>();
-  private AuthorizationHandler requestHandler;
+  private IRequestHandler requestHandler;
 
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
 //    requestHandlers.add(new ImplicitRequestHandler());
+    requestHandler = new TokenRequestHandler();
   }
 
   @Override
@@ -32,7 +33,6 @@ public class OAuthFilter implements Filter, Constant{
     HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
     HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
     String path = httpServletRequest.getServletContext().getContextPath();
-    System.out.println(path);
     String username = httpServletRequest.getParameter("username");
     String tokenValue = httpServletRequest.getParameter(PropertiesUtil.getString(PARAMETER_NAME));
 //    String tokenValue = httpServletRequest.getParameter("token");
@@ -42,21 +42,37 @@ public class OAuthFilter implements Filter, Constant{
         if(TOKEN.equals(cookie.getName())){
           tokenValue = cookie.getValue();
         }
+        if("username".equals(cookie.getName())){
+          username = cookie.getValue();
+        }
       }
     }
     if(tokenValue == null || tokenValue.trim().isEmpty()){
-      httpServletResponse.sendRedirect(path+"/login.html");
+      if(WebUtil.isAjaxRequest(httpServletRequest)){
+         WebUtil.replyNoAccess(httpServletRequest, httpServletResponse);
+      }else{
+        String schema = httpServletRequest.getScheme();
+        String localAddr  = httpServletRequest.getLocalAddr();
+        int port = httpServletRequest.getLocalPort();
+        String redirectUrl = schema+"://"+localAddr+":"+port+path+"/login.html";
+        httpServletResponse.sendRedirect(redirectUrl);
+      }
 //      WebUtil.replyNoAccess(httpServletRequest, httpServletResponse);
     } else {
       Token token = simpTokenProvider.getToken(username);
-      if(simpTokenProvider.checkToken(httpServletRequest,token)){
-//        try{
-//          requestHandler.handleAuthorization(servletRequest, servletResponse);
-//        }catch (Exception e){
-//
-//        }
-        filterChain.doFilter(servletRequest,servletResponse);
+      if(token != null){
+        try{
+          boolean result = requestHandler.handleRequest(httpServletRequest,httpServletResponse,token);
+          if(result){
+            filterChain.doFilter(servletRequest,servletResponse);
+          }else {
+            //Token 不对
+          }
+        }catch (Exception e){
+          e.printStackTrace();
+        }
       }else{
+        //TODO token 过期了,需要用refreshToken来获取新的token
         WebUtil.replyNoAccess(httpServletRequest, httpServletResponse);
       }
     }

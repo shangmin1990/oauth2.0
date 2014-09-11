@@ -4,7 +4,6 @@ import com.benjamin.oauth2.token.IAuthTokenGenerator;
 import com.benjamin.oauth2.token.IAuthTokenProvider;
 import com.benjamin.oauth2.token.Token;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -45,7 +44,7 @@ public class SimpTokenProvider implements IAuthTokenProvider {
   }
 
   @Override
-  public boolean checkToken(HttpServletRequest request, Token token){
+  public boolean checkToken(String key,String tokenValue){
 
     return false;
   }

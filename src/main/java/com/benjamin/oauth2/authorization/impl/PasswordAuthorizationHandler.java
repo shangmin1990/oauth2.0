@@ -6,8 +6,11 @@ import com.benjamin.oauth2.util.WebUtil;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
+ * //TODO 控制请求次数,防止暴力破解
  * Created by benjamin on 9/9/14.
  */
 public class PasswordAuthorizationHandler extends GrantTypeAuthorizationHandlerAdapter {
@@ -25,6 +28,12 @@ public class PasswordAuthorizationHandler extends GrantTypeAuthorizationHandlerA
         tokenProvider.saveToken(username, access_token);
         tokenProvider.saveToken(username, refresh_token);
         WebUtil.responseToken(request,response,token);
+      }else{
+        try{
+          WebUtil.replyNoAccess((HttpServletRequest)request,(HttpServletResponse)response);
+        }catch (Exception e){
+          e.printStackTrace();
+        }
       }
     }
     super.handlePasswordGrantType(request, response);

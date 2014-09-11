@@ -15,10 +15,10 @@ import java.util.UUID;
 public class SimpAuthTokenGenerator implements IAuthTokenGenerator, Constant {
 
   //默认配置，可以在oauth.properties中配置此项
-  //Token有效期 (单位毫秒)
+  //Token有效期 (单位天)
   private long tokenExpires = 30;
   //默认配置，可以在oauth.properties中配置此项
-  //AccessToken有效期 30分钟 (转换为毫秒,默认配置)
+  //AccessToken有效期 30分钟 (默认配置)
   private long accessTokenExpires = 30;
   //默认配置，可以在oauth.properties中配置此项
   //永不过期
@@ -26,6 +26,9 @@ public class SimpAuthTokenGenerator implements IAuthTokenGenerator, Constant {
 
   public SimpAuthTokenGenerator(){
     try{
+      //This is just a TEST
+      //设置token的有效期为两分钟
+//      long access = 2*60*1000;
       long access = Long.parseLong(PropertiesUtil.getString(EXPIRES, String.valueOf(tokenExpires)))*24*60*60*1000;
       long accessTokenValidTime = Long.parseLong(PropertiesUtil.getString(ACCESS_EXPIRES, String.valueOf(accessTokenExpires)))*60*1000;
       long refreshTokenExpires = Long.parseLong(PropertiesUtil.getString(REFRESH_EXPIRES, String.valueOf(this.refreshTokenExpires)))*24*60*60*1000;

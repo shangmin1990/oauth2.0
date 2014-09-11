@@ -13,11 +13,11 @@ public interface IAuthTokenProvider {
 
   /**
    * 检查token的合法性
-   * @param request
-   * @param token
+   * @param key
+   * @param tokenValue
    * @return
    */
-  boolean checkToken(HttpServletRequest request, Token token);
+  boolean checkToken(String key,String tokenValue);
 
   /**
    * 保存一个Token(可能是 AccessToken 与 refreshToken)

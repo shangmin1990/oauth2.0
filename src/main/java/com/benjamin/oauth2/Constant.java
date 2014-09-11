@@ -15,4 +15,5 @@ public interface Constant {
   //认证成功的请求地址
   String SUCCESS_URL = " default-target-url";
   String TOKEN = "token";
+  String TOKEN_MD5 = "tokenMd5";
 }
