@@ -5,6 +5,7 @@ import com.benjamin.oauth2.token.IAuthTokenProvider;
 import com.benjamin.oauth2.token.impl.SimpTokenProvider;
 import com.benjamin.oauth2.util.PropertiesUtil;
 
+import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
@@ -55,7 +56,6 @@ public class GrantTypeAuthorizationHandlerAdapter extends AbstractAuthorizationH
       if(!passwordValidator.getClass().getInterfaces()[0].getName().equals(name)){
         throw new Exception("实现类必须实现 "+ name + " 接口");
       }
-
     }catch (ClassNotFoundException e){
       e.printStackTrace();
     }catch (IllegalAccessException e){

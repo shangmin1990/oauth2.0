@@ -38,8 +38,8 @@ public class SimpTokenProvider implements IAuthTokenProvider {
     return simpTokenProvider;
   }
 
-  @Override
-  public void initializer() {
+//  @Override
+  private void initializer() {
     TokenCheckTask.checkTokenExpires();
   }
 
@@ -99,10 +99,12 @@ public class SimpTokenProvider implements IAuthTokenProvider {
     TokenCheckTask.timerTask.cancel();
   }
 
+  @Override
   public IAuthTokenGenerator getAuthTokenGenerator() {
     return authTokenGenerator;
   }
 
+  @Override
   public void setAuthTokenGenerator(IAuthTokenGenerator authTokenGenerator) {
     this.authTokenGenerator = authTokenGenerator;
   }

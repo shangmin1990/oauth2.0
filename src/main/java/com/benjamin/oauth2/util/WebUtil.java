@@ -5,6 +5,7 @@ import net.sf.json.JSONObject;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,13 +26,29 @@ public class WebUtil {
   }
 
   public static void replyNoAccess(HttpServletRequest request,HttpServletResponse response) throws IOException {
+    replyNoAccess(request, response,"No Access");
+  }
+
+  public static void replyNoAccess(HttpServletRequest request,HttpServletResponse response, String responseText) throws IOException {
     String encoding = request.getCharacterEncoding();
     response.setCharacterEncoding(encoding);
     response.setStatus(401);
     PrintWriter out = response.getWriter();
-    out.println("No Access");
+    out.println(responseText);
     out.flush();
     out.close();
+  }
+
+  public static String getCookieValue(HttpServletRequest request, String cookieName){
+    Cookie[] cookies = request.getCookies();
+    if(cookies!=null && cookies.length > 0){
+      for(Cookie cookie: cookies){
+        if(cookie.getName().equals(cookieName)){
+          return cookie.getValue();
+        }
+      }
+    }
+    return null;
   }
 
   public static void responseToken(ServletRequest request, ServletResponse servletResponse, Token token){

@@ -4,6 +4,7 @@ import com.benjamin.oauth2.Constant;
 import com.benjamin.oauth2.handler.IRequestHandler;
 import com.benjamin.oauth2.token.Token;
 import com.benjamin.oauth2.util.CodecUtil;
+import com.benjamin.oauth2.util.WebUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,15 +21,22 @@ public class TokenRequestHandler implements IRequestHandler, Constant {
     //
     String clientHashValue = request.getParameter(TOKEN_MD5);
     String hashValue;
-    if(sortedParam.isEmpty()){
-      hashValue = CodecUtil.md5(token.getValue());
-    } else {
-      hashValue = CodecUtil.md5(sortedParam);
+    //客户端无法获取token (ngnix 做代理,)对比token值
+    if(clientHashValue == null){
+      String tokenCookieValue = WebUtil.getCookieValue(request,TOKEN);
+      return token.getValue().equals(tokenCookieValue);
+    }else{
+      if(sortedParam.isEmpty()){
+        //
+        hashValue = CodecUtil.md5(token.getValue());
+      } else {
+        hashValue = CodecUtil.md5(sortedParam);
+      }
+      if(hashValue.equals(clientHashValue)){
+        return true;
+      }
+      return false;
     }
-    if(hashValue.equals(clientHashValue)){
-      return true;
-    }
-    return false;
   }
 
   /**
@@ -54,6 +62,12 @@ public class TokenRequestHandler implements IRequestHandler, Constant {
         stringBuilder.append(request.getParameter(paramName));
         stringBuilder.append("&");
       }
+    }
+    if(stringBuilder.toString().isEmpty()){
+      return stringBuilder.toString();
+    }else {
+      stringBuilder.append("token=");
+      stringBuilder.append(token.getValue());
     }
     return stringBuilder.toString();
   }

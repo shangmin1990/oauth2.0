@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +34,12 @@ public class AuthorizationServlet extends HttpServlet {
         authorizationHandler.handleAuthorization(req, resp);
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      resp.setStatus(500);
+      resp.setCharacterEncoding(req.getCharacterEncoding());
+      PrintWriter out = resp.getWriter();
+      e.printStackTrace(out);
+      out.flush();
+      out.close();
     }
   }
 }

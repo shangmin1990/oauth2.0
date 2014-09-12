@@ -6,10 +6,10 @@ import javax.servlet.http.HttpServletRequest;
  * Created by benjamin on 9/3/14.
  */
 public interface IAuthTokenProvider {
-  /**
-   * AuthTokenProvider初始化 调用的方法
-   */
-  void initializer();
+//  /**
+//   * AuthTokenProvider初始化 调用的方法
+//   */
+//  void initializer();
 
   /**
    * 检查token的合法性
@@ -57,4 +57,15 @@ public interface IAuthTokenProvider {
    * 销毁方法
    */
   void destroy();
+
+  /**
+   * 注入authtoken生成器
+   * @param authTokenGenerator
+   */
+  void setAuthTokenGenerator(IAuthTokenGenerator authTokenGenerator);
+
+  /**
+   * 获取此实例的authtoken生成器
+   */
+  IAuthTokenGenerator getAuthTokenGenerator();
 }

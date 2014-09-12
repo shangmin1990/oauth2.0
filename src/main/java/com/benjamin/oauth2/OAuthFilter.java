@@ -36,20 +36,22 @@ public class OAuthFilter implements Filter, Constant{
     String username = httpServletRequest.getParameter("username");
     String tokenValue = httpServletRequest.getParameter(PropertiesUtil.getString(PARAMETER_NAME));
 //    String tokenValue = httpServletRequest.getParameter("token");
-    Cookie[] cookies = httpServletRequest.getCookies();
-    if(cookies!=null && cookies.length > 0){
-      for(Cookie cookie: cookies){
-        if(TOKEN.equals(cookie.getName())){
-          tokenValue = cookie.getValue();
-        }
-        if("username".equals(cookie.getName())){
-          username = cookie.getValue();
-        }
-      }
-    }
+//    Cookie[] cookies = httpServletRequest.getCookies();
+//    if(cookies!=null && cookies.length > 0){
+//      for(Cookie cookie: cookies){
+//        if(TOKEN.equals(cookie.getName())){
+//          tokenValue = cookie.getValue();
+//        }
+//        if("username".equals(cookie.getName())){
+//          username = cookie.getValue();
+//        }
+//      }
+//    }
+    String cookieTokenValue = WebUtil.getCookieValue(httpServletRequest,TOKEN);
+    tokenValue = cookieTokenValue == null ? tokenValue: cookieTokenValue;
     if(tokenValue == null || tokenValue.trim().isEmpty()){
       if(WebUtil.isAjaxRequest(httpServletRequest)){
-         WebUtil.replyNoAccess(httpServletRequest, httpServletResponse);
+         WebUtil.replyNoAccess(httpServletRequest, httpServletResponse,"need param tokenMd5");
       }else{
         String schema = httpServletRequest.getScheme();
         String localAddr  = httpServletRequest.getLocalAddr();
@@ -72,8 +74,8 @@ public class OAuthFilter implements Filter, Constant{
           e.printStackTrace();
         }
       }else{
-        //TODO token 过期了,需要用refreshToken来获取新的token
-        WebUtil.replyNoAccess(httpServletRequest, httpServletResponse);
+        //TODO 1.token 过期了,需要用refreshToken来获取新的token 2.此Token是无效的(伪造的)
+        WebUtil.replyNoAccess(httpServletRequest, httpServletResponse,"Token expires");
       }
     }
   }
