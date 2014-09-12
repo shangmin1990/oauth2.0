@@ -3,6 +3,7 @@ package com.benjamin.oauth2.authorization.servlet;
 import com.benjamin.oauth2.authorization.AuthorizationHandler;
 import com.benjamin.oauth2.authorization.impl.ImplicitAuthorizationHandler;
 import com.benjamin.oauth2.authorization.impl.PasswordAuthorizationHandler;
+import com.benjamin.oauth2.authorization.servlet.exception.NoGrantTypeFoundException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -33,6 +34,8 @@ public class AuthorizationServlet extends HttpServlet {
       for(AuthorizationHandler authorizationHandler: authorizationHandlers){
         authorizationHandler.handleAuthorization(req, resp);
       }
+    } catch (NoGrantTypeFoundException e){
+      e.printStackTrace();
     } catch (Exception e) {
       resp.setStatus(500);
       resp.setCharacterEncoding(req.getCharacterEncoding());

@@ -2,6 +2,7 @@ package com.benjamin.oauth2.authorization.impl;
 
 import com.benjamin.oauth2.Constant;
 import com.benjamin.oauth2.authorization.AuthorizationHandler;
+import com.benjamin.oauth2.authorization.servlet.exception.NoGrantTypeFoundException;
 import com.benjamin.oauth2.token.GrantType;
 import com.benjamin.oauth2.token.IAuthTokenProvider;
 import com.benjamin.oauth2.token.Token;
@@ -56,7 +57,7 @@ public abstract class AbstractAuthorizationHandler implements AuthorizationHandl
     } else if (GrantType.CLIENT == grantType){
       handleClientGrantType(request, response);
     } else{
-      throw new Exception( "Grant_type " + grantType +" not support");
+      throw new NoGrantTypeFoundException( "Grant_type " + grantType +" not support");
     }
 //    postAuthorization(request, response, token);
   }
