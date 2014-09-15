@@ -5,9 +5,12 @@ import com.benjamin.oauth2.token.IAuthTokenProvider;
 import com.benjamin.oauth2.token.impl.SimpTokenProvider;
 import com.benjamin.oauth2.util.PropertiesUtil;
 
+import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created by benjamin on 9/4/14.
@@ -26,22 +29,22 @@ public class GrantTypeAuthorizationHandlerAdapter extends AbstractAuthorizationH
   }
 
   @Override
-  public void handlePasswordGrantType(ServletRequest request, ServletResponse response) {
+  public void handlePasswordGrantType(HttpServletRequest request, HttpServletResponse response) {
 
   }
 
   @Override
-  public void handleAuthCodeGrantType(ServletRequest request, ServletResponse response) {
+  public void handleAuthCodeGrantType(HttpServletRequest request, HttpServletResponse response) {
 
   }
 
   @Override
-  public void handleImplicitGrantType(ServletRequest request, ServletResponse response) {
+  public void handleImplicitGrantType(HttpServletRequest request, HttpServletResponse response) {
 
   }
 
   @Override
-  public void handleClientGrantType(ServletRequest request, ServletResponse response) {
+  public void handleClientGrantType(HttpServletRequest request, HttpServletResponse response) {
 
   }
   private void findPasswordValidator(){
@@ -67,6 +70,16 @@ public class GrantTypeAuthorizationHandlerAdapter extends AbstractAuthorizationH
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+
+  protected boolean validPassword(HttpServletRequest request){
+    String username = request.getParameter(USERNAME);
+    String password = request.getParameter(PASSWORD);
+
+    if(username != null && password != null && !username.isEmpty() && !password.isEmpty()){
+      return passwordValidator.validPassword(username,password);
+    }
+    return false;
   }
 
 }

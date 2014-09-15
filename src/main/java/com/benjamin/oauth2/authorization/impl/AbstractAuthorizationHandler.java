@@ -47,15 +47,17 @@ public abstract class AbstractAuthorizationHandler implements AuthorizationHandl
 
   @Override
   public void handleAuthorization(ServletRequest request, ServletResponse response) throws Exception{
+    HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+    HttpServletResponse httpServletResponse = (HttpServletResponse) response;
     GrantType grantType = Enum.valueOf(GrantType.class,request.getParameter(GRANT_TYPE).toUpperCase()) ;
     if (GrantType.PASSWORD == grantType){
-      handlePasswordGrantType(request, response);
+      handlePasswordGrantType(httpServletRequest, httpServletResponse);
     } else if(GrantType.AUTHORIZATION_CODE == grantType){
-      handleAuthCodeGrantType(request, response);
+      handleAuthCodeGrantType(httpServletRequest, httpServletResponse);
     } else if(GrantType.IMPLICIT == grantType){
-      handleImplicitGrantType(request, response);
+      handleImplicitGrantType(httpServletRequest, httpServletResponse);
     } else if (GrantType.CLIENT == grantType){
-      handleClientGrantType(request, response);
+      handleClientGrantType(httpServletRequest, httpServletResponse);
     } else{
       throw new NoGrantTypeFoundException( "Grant_type " + grantType +" not support");
     }
@@ -89,7 +91,7 @@ public abstract class AbstractAuthorizationHandler implements AuthorizationHandl
    * @param request
    * @param response
    */
-  public abstract void handlePasswordGrantType(ServletRequest request, ServletResponse response);
+  public abstract void handlePasswordGrantType(HttpServletRequest request, HttpServletResponse response);
 
   /**
    * 授权码验证模式.
@@ -97,20 +99,20 @@ public abstract class AbstractAuthorizationHandler implements AuthorizationHandl
    * @param request
    * @param response
    */
-  public abstract void handleAuthCodeGrantType(ServletRequest request, ServletResponse response);
+  public abstract void handleAuthCodeGrantType(HttpServletRequest request, HttpServletResponse response);
 
   /**
    * 隐式授权模式
    * @param request
    * @param response
    */
-  public abstract void handleImplicitGrantType(ServletRequest request, ServletResponse response);
+  public abstract void handleImplicitGrantType(HttpServletRequest request, HttpServletResponse response);
 
   /**
    * 客户端模式
    * @param request
    * @param response
    */
-  public abstract void handleClientGrantType(ServletRequest request, ServletResponse response);
+  public abstract void handleClientGrantType(HttpServletRequest request, HttpServletResponse response);
 
 }
