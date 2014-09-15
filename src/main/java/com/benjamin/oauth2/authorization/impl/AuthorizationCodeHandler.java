@@ -1,5 +1,7 @@
 package com.benjamin.oauth2.authorization.impl;
 
+import com.benjamin.oauth2.token.Token;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +16,8 @@ public class AuthorizationCodeHandler extends GrantTypeAuthorizationHandlerAdapt
     boolean result = validPassword(request);
     if(result){
       //返回accessToken
-      tokenProvider.getAuthTokenGenerator().generateAccessToken();
+      Token token = tokenProvider.getAuthTokenGenerator().generateAccessToken();
+
     }
     super.handleAuthCodeGrantType(request, response);
   }

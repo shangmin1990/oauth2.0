@@ -48,10 +48,11 @@ public class AuthorizationServlet extends HttpServlet {
     //code 换取access_Token
     if(responseType!= null && !responseType.isEmpty() && req.getPathInfo().indexOf("authorize")>=0){
       String clientId = req.getParameter("client_id");
+      String state = req.getParameter("state");
       String redirect_uri = req.getParameter("redirect_uri");
       if(clientManager.checkClientId(clientId)){
         Token token = authTokenProvider.getAuthTokenGenerator().generateAccessToken();
-        WebUtil.responseToken(req,resp,token);
+        req.getRequestDispatcher("access_token?code="+token.getValue()+"&redirect_uri="+redirect_uri+"&state="+state+"&grant_type=authorization_code").forward(req, resp);
       }
     //直接获取token
     }else if(req.getPathInfo().indexOf("access_token") >=0 ){
