@@ -4,6 +4,14 @@ import com.benjamin.oauth2.authorization.AuthorizationHandler;
 import com.benjamin.oauth2.authorization.impl.ImplicitAuthorizationHandler;
 import com.benjamin.oauth2.authorization.impl.PasswordAuthorizationHandler;
 import com.benjamin.oauth2.authorization.servlet.exception.NoGrantTypeFoundException;
+import com.benjamin.oauth2.client.IClientManager;
+import com.benjamin.oauth2.client.impl.ClientManager;
+import com.benjamin.oauth2.token.IAuthTokenProvider;
+import com.benjamin.oauth2.token.Token;
+import com.benjamin.oauth2.token.impl.SimpTokenProvider;
+import com.benjamin.oauth2.util.WebUtil;
+import com.sun.corba.se.impl.oa.toa.TOA;
+import net.sf.json.JSONObject;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -21,28 +29,46 @@ public class AuthorizationServlet extends HttpServlet {
 
   private List<AuthorizationHandler> authorizationHandlers = new ArrayList<AuthorizationHandler>();
 
+  private IClientManager<String> clientManager;
+
+  private IAuthTokenProvider authTokenProvider;
+
   @Override
   public void init() throws ServletException {
     authorizationHandlers.add(new PasswordAuthorizationHandler());
     authorizationHandlers.add(new ImplicitAuthorizationHandler());
+    clientManager = new ClientManager();
+    authTokenProvider = SimpTokenProvider.getInstance();
     super.init();
   }
 
   @Override
   protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    try {
-      for(AuthorizationHandler authorizationHandler: authorizationHandlers){
-        authorizationHandler.handleAuthorization(req, resp);
+    String responseType = req.getParameter("response_type");
+    //code 换取access_Token
+    if(responseType!= null && !responseType.isEmpty() && req.getPathInfo().indexOf("authorize")>=0){
+      String clientId = req.getParameter("client_id");
+      String redirect_uri = req.getParameter("redirect_uri");
+      if(clientManager.checkClientId(clientId)){
+        Token token = authTokenProvider.getAuthTokenGenerator().generateAccessToken();
+        WebUtil.responseToken(req,resp,token);
       }
-    } catch (NoGrantTypeFoundException e){
-      e.printStackTrace();
-    } catch (Exception e) {
-      resp.setStatus(500);
-      resp.setCharacterEncoding(req.getCharacterEncoding());
-      PrintWriter out = resp.getWriter();
-      e.printStackTrace(out);
-      out.flush();
-      out.close();
+    //直接获取token
+    }else if(req.getPathInfo().indexOf("access_token") >=0 ){
+      try {
+        for(AuthorizationHandler authorizationHandler: authorizationHandlers){
+          authorizationHandler.handleAuthorization(req, resp);
+        }
+      } catch (NoGrantTypeFoundException e){
+        e.printStackTrace();
+      } catch (Exception e) {
+        resp.setStatus(500);
+        resp.setCharacterEncoding(req.getCharacterEncoding());
+        PrintWriter out = resp.getWriter();
+        e.printStackTrace(out);
+        out.flush();
+        out.close();
+      }
     }
   }
 }
