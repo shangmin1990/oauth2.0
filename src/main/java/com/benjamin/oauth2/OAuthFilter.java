@@ -33,7 +33,10 @@ public class OAuthFilter implements Filter, Constant{
     HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
     HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
     String path = httpServletRequest.getServletContext().getContextPath();
-    String username = httpServletRequest.getParameter("username");
+    String username = WebUtil.getCookieValue(httpServletRequest, PropertiesUtil.getString(USER_COOKIE_NAME,"user"));
+    if(username == null){
+      return;
+    }
     String tokenValue = httpServletRequest.getParameter(PropertiesUtil.getString(PARAMETER_NAME));
 //    String tokenValue = httpServletRequest.getParameter("token");
 //    Cookie[] cookies = httpServletRequest.getCookies();

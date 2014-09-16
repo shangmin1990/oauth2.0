@@ -2,6 +2,7 @@ package com.benjamin.oauth2.authorization.impl;
 
 import com.benjamin.oauth2.token.Token;
 import com.benjamin.oauth2.token.impl.SimpTokenProvider;
+import com.benjamin.oauth2.util.PropertiesUtil;
 import com.benjamin.oauth2.util.WebUtil;
 
 import javax.servlet.ServletRequest;
@@ -43,6 +44,9 @@ public class PasswordAuthorizationHandler extends GrantTypeAuthorizationHandlerA
       }else{
         Cookie tokenCookie = new Cookie("token",token.getValue());
         Cookie refreshTokenCookie = new Cookie("refreshToken",refresh_token.getValue());
+        Cookie userCookie = new Cookie(PropertiesUtil.getString(USER_COOKIE_NAME, "user"), username);
+        userCookie.setMaxAge(30*24*3600);
+        userCookie.setPath(request.getContextPath());
 //        tokenCookie.setDomain(request.getRemoteHost());
         tokenCookie.setPath(request.getContextPath());
 //        refreshTokenCookie.setDomain(request.getRemoteHost());
@@ -53,6 +57,7 @@ public class PasswordAuthorizationHandler extends GrantTypeAuthorizationHandlerA
         refreshTokenCookie.setMaxAge(30*24*3600);
         response.addCookie(tokenCookie);
         response.addCookie(refreshTokenCookie);
+        response.addCookie(userCookie);
         WebUtil.responseToken(request,response,token);
       }
     }else{

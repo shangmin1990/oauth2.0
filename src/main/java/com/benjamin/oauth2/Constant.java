@@ -19,4 +19,5 @@ public interface Constant {
   String TOKEN = "token";
   String TOKEN_MD5 = "tokenMd5";
   String RESPONSE_TYPE = "response_type";
+  String USER_COOKIE_NAME = "user-cookie-name";
 }

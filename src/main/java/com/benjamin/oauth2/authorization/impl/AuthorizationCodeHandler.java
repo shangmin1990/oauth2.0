@@ -31,7 +31,17 @@ public class AuthorizationCodeHandler extends GrantTypeAuthorizationHandlerAdapt
 //      Token token = tokenProvider.getAuthTokenGenerator().generateAccessToken();
 //
 //    }
-    String username = "a";
+    String username = WebUtil.getCookieValue(request, userCookieName);
+    //未登录过啊 必须登录啊
+    if(username == null){
+      try {
+        response.sendRedirect(request.getContextPath()+"/loginPage.html");
+//        request.getRequestDispatcher("/loginPage.html").forward(request,response);
+        return;
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
     String responseType = request.getParameter(RESPONSE_TYPE);
     String clientId = request.getParameter(CLIENT_ID);
     String redirect_uri = request.getParameter(REDIRECT_URI);

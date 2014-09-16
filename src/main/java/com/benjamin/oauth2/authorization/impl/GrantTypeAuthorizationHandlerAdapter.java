@@ -20,12 +20,15 @@ public class GrantTypeAuthorizationHandlerAdapter extends AbstractAuthorizationH
 
   private static final String PASSWORD_VALIDATOR = "password-validator.class";
 
+  protected String userCookieName = "user";
+
   private static final String TEST = "test";
 
   protected PasswordValidator passwordValidator;
 
   public GrantTypeAuthorizationHandlerAdapter(){
     findPasswordValidator();
+    userCookieName = PropertiesUtil.getString(USER_COOKIE_NAME, userCookieName);
   }
 
   @Override

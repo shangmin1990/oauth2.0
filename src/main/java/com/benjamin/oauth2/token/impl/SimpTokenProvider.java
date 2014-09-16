@@ -50,25 +50,30 @@ public class SimpTokenProvider implements IAuthTokenProvider {
   }
 
   @Override
-  public void saveToken(String key,Token token) {
-    if(token.isAccessToken()){
-      accessTokens.put(key,token);
-    }else if(token.getRefreshToken() == null){
-      refreshTokens.put(key, token);
-    }else{
-      tokens.put(key,token);
+  public void saveToken(String key,Token token){
+    if(key != null){
+      if(token.isAccessToken()){
+        accessTokens.put(key,token);
+      }else if(token.getRefreshToken() == null){
+        refreshTokens.put(key, token);
+      }else{
+        tokens.put(key,token);
+      }
     }
   }
 
   @Override
   public Token getToken(String key) {
-    Token token = tokens.get(key);
-    return token;
+    if(key!=null){
+      Token token = tokens.get(key);
+      return token;
+    }
+    return null;
   }
 
   @Override
   public Token getAccessToken(String key) {
-    return accessTokens.get(key);
+    return key == null ? null: accessTokens.get(key);
   }
 
   @Override

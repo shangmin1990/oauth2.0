@@ -70,8 +70,6 @@ public class AuthorizationServlet extends HttpServlet {
         for(AuthorizationHandler authorizationHandler: authorizationHandlers){
           authorizationHandler.handleAuthorization(req, resp);
         }
-      } catch (NoGrantTypeFoundException e){
-        e.printStackTrace();
       } catch (Exception e) {
         resp.setStatus(500);
         resp.setCharacterEncoding(req.getCharacterEncoding());

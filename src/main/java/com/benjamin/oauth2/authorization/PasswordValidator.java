@@ -1,5 +1,6 @@
 package com.benjamin.oauth2.authorization;
 
+
 /**
  * Created by benjamin on 9/10/14.
  */
