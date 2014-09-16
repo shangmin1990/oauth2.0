@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class GrantTypeAuthorizationHandlerAdapter extends AbstractAuthorizationHandler {
 
-  private static final String PASSWORD_VALIDATOR = "password-validator";
+  private static final String PASSWORD_VALIDATOR = "password-validator.class";
 
   private static final String TEST = "test";
 
