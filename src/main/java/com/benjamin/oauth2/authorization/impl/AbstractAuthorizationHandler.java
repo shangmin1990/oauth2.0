@@ -49,18 +49,26 @@ public abstract class AbstractAuthorizationHandler implements AuthorizationHandl
   public void handleAuthorization(ServletRequest request, ServletResponse response) throws Exception{
     HttpServletRequest httpServletRequest = (HttpServletRequest) request;
     HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-    GrantType grantType = Enum.valueOf(GrantType.class,request.getParameter(GRANT_TYPE).toUpperCase()) ;
-    if (GrantType.PASSWORD == grantType){
-      handlePasswordGrantType(httpServletRequest, httpServletResponse);
-    } else if(GrantType.AUTHORIZATION_CODE == grantType){
+    String grant_type = request.getParameter(GRANT_TYPE);
+    GrantType grantType = null;
+    if(grant_type != null){
+      grantType = Enum.valueOf(GrantType.class,grant_type.toUpperCase()) ;
+      if (GrantType.PASSWORD == grantType){
+        handlePasswordGrantType(httpServletRequest, httpServletResponse);
+      } else if(GrantType.AUTHORIZATION_CODE == grantType){
+        handleAuthCodeGrantType(httpServletRequest, httpServletResponse);
+      } else if(GrantType.IMPLICIT == grantType){
+        handleImplicitGrantType(httpServletRequest, httpServletResponse);
+      } else if (GrantType.CLIENT == grantType){
+        handleClientGrantType(httpServletRequest, httpServletResponse);
+      } else{
+        throw new NoGrantTypeFoundException( "Grant_type " + grantType +" not support");
+      }
+    }else {
       handleAuthCodeGrantType(httpServletRequest, httpServletResponse);
-    } else if(GrantType.IMPLICIT == grantType){
-      handleImplicitGrantType(httpServletRequest, httpServletResponse);
-    } else if (GrantType.CLIENT == grantType){
-      handleClientGrantType(httpServletRequest, httpServletResponse);
-    } else{
-      throw new NoGrantTypeFoundException( "Grant_type " + grantType +" not support");
     }
+
+
 //    postAuthorization(request, response, token);
   }
 

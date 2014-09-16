@@ -33,7 +33,8 @@ public class PasswordAuthorizationHandler extends GrantTypeAuthorizationHandlerA
     if(result){
       Token token = tokenProvider.getAuthTokenGenerator().generateToken();
 //        Token access_token =  tokenProvider.getAuthTokenGenerator().generateAccessToken();
-      Token refresh_token = tokenProvider.getAuthTokenGenerator().generateRefreshToken();
+//      Token refresh_token = tokenProvider.getAuthTokenGenerator().generateRefreshToken();
+      Token refresh_token = token.getRefreshToken();
       tokenProvider.saveToken(username, token);
 //        tokenProvider.saveToken(username, access_token);
       tokenProvider.saveToken(username, refresh_token);

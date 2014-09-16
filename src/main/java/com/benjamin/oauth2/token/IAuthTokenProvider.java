@@ -20,7 +20,7 @@ public interface IAuthTokenProvider {
   boolean checkToken(String key,String tokenValue);
 
   /**
-   * 保存一个Token(可能是 AccessToken 与 refreshToken)
+   * 保存一个Token(可能是 RequestToken 与 refreshToken)
    * @param key
    * @param token
    */
@@ -68,4 +68,5 @@ public interface IAuthTokenProvider {
    * 获取此实例的authtoken生成器
    */
   IAuthTokenGenerator getAuthTokenGenerator();
+
 }

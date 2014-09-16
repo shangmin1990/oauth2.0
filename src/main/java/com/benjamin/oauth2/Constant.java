@@ -4,7 +4,9 @@ package com.benjamin.oauth2;
  * Created by benjamin on 9/3/14.
  */
 public interface Constant {
-  String REDIRECT_URL = "redirect-url";
+  String REDIRECT_URI = "redirect_uri";
+  String CLIENT_ID = "client_id";
+  String STATE = "state";
   String REQUEST_URL = "request-url";
   String PARAMETER_NAME = "parameter-name";
   String EXPIRES = "expires";
@@ -16,4 +18,5 @@ public interface Constant {
   String SUCCESS_URL = " default-target-url";
   String TOKEN = "token";
   String TOKEN_MD5 = "tokenMd5";
+  String RESPONSE_TYPE = "response_type";
 }

@@ -1,6 +1,7 @@
 package com.benjamin.oauth2.authorization.servlet;
 
 import com.benjamin.oauth2.authorization.AuthorizationHandler;
+import com.benjamin.oauth2.authorization.impl.AuthorizationCodeHandler;
 import com.benjamin.oauth2.authorization.impl.ImplicitAuthorizationHandler;
 import com.benjamin.oauth2.authorization.impl.PasswordAuthorizationHandler;
 import com.benjamin.oauth2.authorization.servlet.exception.NoGrantTypeFoundException;
@@ -37,6 +38,7 @@ public class AuthorizationServlet extends HttpServlet {
   public void init() throws ServletException {
     authorizationHandlers.add(new PasswordAuthorizationHandler());
     authorizationHandlers.add(new ImplicitAuthorizationHandler());
+    authorizationHandlers.add(new AuthorizationCodeHandler());
     clientManager = new ClientManager();
     authTokenProvider = SimpTokenProvider.getInstance();
     super.init();
@@ -44,18 +46,26 @@ public class AuthorizationServlet extends HttpServlet {
 
   @Override
   protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    String responseType = req.getParameter("response_type");
-    //code 换取access_Token
-    if(responseType!= null && !responseType.isEmpty() && req.getPathInfo().indexOf("authorize")>=0){
-      String clientId = req.getParameter("client_id");
-      String state = req.getParameter("state");
-      String redirect_uri = req.getParameter("redirect_uri");
-      if(clientManager.checkClientId(clientId)){
-        Token token = authTokenProvider.getAuthTokenGenerator().generateAccessToken();
-        req.getRequestDispatcher("access_token?code="+token.getValue()+"&redirect_uri="+redirect_uri+"&state="+state+"&grant_type=authorization_code").forward(req, resp);
-      }
-    //直接获取token
-    }else if(req.getPathInfo().indexOf("access_token") >=0 ){
+//    String responseType = req.getParameter("response_type");
+//    //code 换取access_Token
+//    if(responseType!= null && !responseType.isEmpty() && req.getPathInfo().indexOf("authorize")>=0){
+//      String clientId = req.getParameter("client_id");
+//      String state = req.getParameter("state");
+//      String redirect_uri = req.getParameter("redirect_uri");
+//      if(clientManager.checkClientId(clientId)){
+//        Token token = authTokenProvider.getAuthTokenGenerator().generateAccessToken();
+////        req.getRequestDispatcher("access_token?code="+token.getValue()+"&redirect_uri="+redirect_uri+"&state="+state+"&grant_type=authorization_code").forward(req, resp);
+//        StringBuilder stringBuilder = new StringBuilder(redirect_uri);
+//        stringBuilder.append("?code=");
+//        stringBuilder.append(token.getValue());
+//        if(state!=null && !state.isEmpty()){
+//          stringBuilder.append("&state=");
+//          stringBuilder.append(state);
+//        }
+//        req.getRequestDispatcher(stringBuilder.toString()).forward(req, resp);
+//      }
+//    //直接获取token
+//    }else if(req.getPathInfo().indexOf("access_token") >= 0 ){
       try {
         for(AuthorizationHandler authorizationHandler: authorizationHandlers){
           authorizationHandler.handleAuthorization(req, resp);
@@ -70,6 +80,6 @@ public class AuthorizationServlet extends HttpServlet {
         out.flush();
         out.close();
       }
-    }
+//    }
   }
 }
