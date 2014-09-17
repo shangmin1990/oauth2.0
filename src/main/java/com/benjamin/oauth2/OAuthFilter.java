@@ -35,6 +35,7 @@ public class OAuthFilter implements Filter, Constant{
     String path = httpServletRequest.getServletContext().getContextPath();
     String username = WebUtil.getCookieValue(httpServletRequest, PropertiesUtil.getString(USER_COOKIE_NAME,"user"));
     if(username == null){
+      WebUtil.replyNoAccess(httpServletRequest, httpServletResponse, "No user found, login first");
       return;
     }
     String tokenValue = httpServletRequest.getParameter(PropertiesUtil.getString(PARAMETER_NAME));

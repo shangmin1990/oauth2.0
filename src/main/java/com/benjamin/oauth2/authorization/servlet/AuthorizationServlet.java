@@ -30,17 +30,17 @@ public class AuthorizationServlet extends HttpServlet {
 
   private List<AuthorizationHandler> authorizationHandlers = new ArrayList<AuthorizationHandler>();
 
-  private IClientManager<String> clientManager;
-
-  private IAuthTokenProvider authTokenProvider;
+//  private IClientManager<String> clientManager;
+//
+//  private IAuthTokenProvider authTokenProvider;
 
   @Override
   public void init() throws ServletException {
     authorizationHandlers.add(new PasswordAuthorizationHandler());
     authorizationHandlers.add(new ImplicitAuthorizationHandler());
     authorizationHandlers.add(new AuthorizationCodeHandler());
-    clientManager = new ClientManager();
-    authTokenProvider = SimpTokenProvider.getInstance();
+//    clientManager = new ClientManager();
+//    authTokenProvider = SimpTokenProvider.getInstance();
     super.init();
   }
 

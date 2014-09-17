@@ -1,11 +1,11 @@
 package com.benjamin.oauth2.authorization.servlet.exception;
 
-import com.sun.jndi.url.dns.dnsURLContext;
+import javax.servlet.ServletException;
 
 /**
  * Created by benjamin on 9/12/14.
  */
-public class NoGrantTypeFoundException extends Exception {
+public class NoGrantTypeFoundException extends ServletException {
 
   public NoGrantTypeFoundException(){
     super();
