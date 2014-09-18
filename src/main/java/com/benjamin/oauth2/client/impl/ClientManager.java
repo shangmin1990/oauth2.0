@@ -18,7 +18,7 @@ public class ClientManager implements IClientManager<String> {
       return false;
     }else {
       //TODO check clientId
-      return true;
+      return client.equals("12345");
     }
 
   }

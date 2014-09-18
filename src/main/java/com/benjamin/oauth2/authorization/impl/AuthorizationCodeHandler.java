@@ -25,27 +25,41 @@ public class AuthorizationCodeHandler extends GrantTypeAuthorizationHandlerAdapt
   }
   @Override
   public void handleAuthCodeGrantType(HttpServletRequest request, HttpServletResponse response) {
-//    boolean result = validPassword(request);
-//    if(result){
-//      //返回accessToken
-//      Token token = tokenProvider.getAuthTokenGenerator().generateAccessToken();
-//
-//    }
+    //尝试从cookie中读取user
     String username = WebUtil.getCookieValue(request, userCookieName);
-    //未登录过啊 必须登录啊
+    //如果cookie中没有user 第一,没有登录,第二,正在登录
     if(username == null){
-      try {
-        response.sendRedirect(request.getContextPath()+"/loginPage.html");
-//        request.getRequestDispatcher("/loginPage.html").forward(request,response);
-        return;
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+      username = request.getParameter("username");
     }
     String responseType = request.getParameter(RESPONSE_TYPE);
     String clientId = request.getParameter(CLIENT_ID);
     String redirect_uri = request.getParameter(REDIRECT_URI);
     if(responseType!= null && !responseType.isEmpty() && responseType.equals("code") && request.getPathInfo().indexOf("authorize") >= 0 ){
+      //未登录过啊 必须登录啊
+      if(username == null){
+        try {
+//        response.sendRedirect(request.getContextPath()+"/loginPage.html");
+          request.getRequestDispatcher("/loginPage.jsp").forward(request,response);
+          return;
+        } catch (IOException e) {
+          e.printStackTrace();
+        } catch (ServletException e) {
+          e.printStackTrace();
+        }
+      }
+      // 如果cookie是空 而且用户名非空,那就是正在登录验证
+      if(WebUtil.getCookieValue(request, userCookieName) == null && username != null){
+          boolean result = validPassword(request);
+          if(!result){
+            try {
+              WebUtil.replyNoAccess(request, response, "UserName or password is wrong");
+            } catch (IOException e) {
+              e.printStackTrace();
+            }
+            return;
+          }
+      }
+
       String state = request.getParameter(STATE);
       if(clientManager.checkClientId(clientId)){
         Token token = tokenProvider.getAuthTokenGenerator().generateAccessToken();
@@ -59,9 +73,20 @@ public class AuthorizationCodeHandler extends GrantTypeAuthorizationHandlerAdapt
         stringBuilder.append(token.getValue());
         stringBuilder.append("&client_id=");
         stringBuilder.append(clientId);
+        //access_token的回调uri
+        String redirect_uri_access_token = PropertiesUtil.getString(REDIRECT_URI, redirect_uri);
+        stringBuilder.append("&redirect_uri=");
+        stringBuilder.append(redirect_uri_access_token);
         if(state!=null && !state.isEmpty()){
           stringBuilder.append("&state=");
           stringBuilder.append(state);
+        }
+        if(WebUtil.getCookieValue(request, userCookieName) == null){
+          Cookie cookie = new Cookie(PropertiesUtil.getString(USER_COOKIE_NAME,userCookieName), username);
+          cookie.setPath(request.getContextPath());
+          response.addCookie(cookie);
+          stringBuilder.append("&username=");
+          stringBuilder.append(username);
         }
         try{
           response.sendRedirect(stringBuilder.toString());
@@ -80,6 +105,9 @@ public class AuthorizationCodeHandler extends GrantTypeAuthorizationHandlerAdapt
             e.printStackTrace();
           }
         }else{
+          if (username == null){
+            username = (String) request.getAttribute("user");
+          }
           Token request_token = tokenProvider.getAccessToken(username);
           String value = request_token.getValue();
           if(value.equals(code)){
